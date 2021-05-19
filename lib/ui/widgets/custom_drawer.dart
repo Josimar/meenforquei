@@ -22,12 +22,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
     Widget _buildDrawerBack() => Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               colors: [
                 Color.fromARGB(255, 200, 250, 250),
                 Color.fromARGB(255, 232, 250, 250),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter
+              ]
           )
       ),
     );

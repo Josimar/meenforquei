@@ -61,10 +61,10 @@ class _CreateMensagemViewState extends State<CreateMensagemView> {
             + mensagem
     */
 
-    Firestore db = Firestore.instance;
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
-    await db.collection("wedding").document(widget.currentUser.wedding)
-        .collection("mensagens").document(idRemetente.trim())
+    await db.collection("wedding").doc(widget.currentUser.wedding)
+        .collection("mensagens").doc(idRemetente.trim())
         .collection(idDestinatario.trim()).add(msg.toMap());
 
     _controllerMensagem.clear();

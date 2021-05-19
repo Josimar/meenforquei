@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:meenforquei/models/local_cerimonia_model.dart';
 
 class LocalCerimoniaItem extends StatelessWidget {
@@ -53,7 +52,7 @@ class LocalCerimoniaItem extends StatelessWidget {
                 textColor: Colors.blue,
                 padding: EdgeInsets.zero,
                 onPressed: (){
-                  launch("https://www.google.com/maps/search/?api=1&query=${local.lat},${local.long}");
+                  // launch("https://www.google.com/maps/search/?api=1&query=${local.lat},${local.long}");
                 },
               ),
               FlatButton(
@@ -61,7 +60,7 @@ class LocalCerimoniaItem extends StatelessWidget {
                 textColor: Colors.blue,
                 padding: EdgeInsets.zero,
                 onPressed: (){
-                  launch("tel:${local.phone}");
+                  // launch("tel:${local.phone}");
                 },
               ),
             ],

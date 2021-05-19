@@ -9,7 +9,7 @@ class MessageService {
 
   String _sistema = "mensagens";
 
-  final CollectionReference _messageCollectionReference = Firestore.instance.collection('wedding');
+  final CollectionReference _messageCollectionReference = FirebaseFirestore.instance.collection('wedding');
 
   Future<DocumentSnapshot> getMensagemById(String wedID, String id) {
     return _messageCollectionReference.doc(wedID).collection(_sistema).doc(id).get();
@@ -18,7 +18,7 @@ class MessageService {
   Stream<QuerySnapshot> getMensagemAsStream(String wedID, String remetenteId, String destinatarioId) {
     return _messageCollectionReference.doc(wedID)
         .collection(_sistema)
-        .document(remetenteId)
+        .doc(remetenteId)
         .collection(destinatarioId)
         .orderBy("time", descending: false)
         .snapshots();
@@ -39,15 +39,15 @@ class MessageService {
   }
 
   Future getMensagensOnceOff(String wedID) async {
-    CollectionReference _mensagensCollectionReference = Firestore.instance
+    CollectionReference _mensagensCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('mensagens');
 
     try {
-      var mensagensDocumentSnapshot = await _mensagensCollectionReference.getDocuments();
+      var mensagensDocumentSnapshot = await _mensagensCollectionReference.get();
       if (mensagensDocumentSnapshot.docs.isNotEmpty){
         return mensagensDocumentSnapshot.docs
-            .map((snapshot) => MensagemModel.fromMap(snapshot.data(), snapshot.documentID))
+            .map((snapshot) => MensagemModel.fromMap(snapshot.data(), snapshot.id))
             .where((mappedItem) => mappedItem.tipo != null)
             .toList();
       }
@@ -64,7 +64,7 @@ class MessageService {
   Stream<QuerySnapshot> streamMensagemCollection(String wedID, String uid, String destUid) {
 //    await Future.delayed(const Duration(seconds: 2));
 
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection("mensagens").doc(uid)
         .collection(destUid)
@@ -112,7 +112,7 @@ class MessageService {
   }
 
   Future getConversaOnce(String wedID, String uid) async {
-    CollectionReference _conversasCollectionReference = Firestore.instance
+    CollectionReference _conversasCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('conversas').doc(uid)
         .collection("ultima");

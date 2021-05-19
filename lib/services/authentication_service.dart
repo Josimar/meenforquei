@@ -10,7 +10,7 @@ class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirestoreService _firestoreService = locator<FirestoreService>();
 
-  FirebaseUser _firebaseUser;
+  User _firebaseUser;
   bool get userLogged => _firebaseUser != null;
 
   UserModel _currentUser;
@@ -147,7 +147,7 @@ class AuthenticationService {
 
   Future<bool> isUserLoggedIn() async {
     if (_firebaseUser == null) {
-      _firebaseUser = await _firebaseAuth.currentUser;
+      _firebaseUser = _firebaseAuth.currentUser;
       await _populateCurrentUser(_firebaseUser);
     }
 
@@ -165,7 +165,7 @@ class AuthenticationService {
       if (_currentUser.name == null){
         DocumentSnapshot docUser = await FirebaseFirestore.instance
             .collection("users")
-            .document(user.uid)
+            .doc(user.uid)
             .get();
 
         _currentUser = UserModel.fromData(docUser.data(), user.uid);
@@ -183,9 +183,9 @@ class AuthenticationService {
             .collection("users")
             .doc(user.uid)
             .collection("wedding")
-            .getDocuments();
+            .get();
 
-        for (int i = 0; i < querySnapshot.documents.length; i++) {
+        for (int i = 0; i < querySnapshot.docs.length; i++) {
           var a = querySnapshot.docs[i];
           _currentUser.wedding = a.data()["wedding"];
 
@@ -209,9 +209,9 @@ class AuthenticationService {
       _currentUser = await _firestoreService.getUser(uid);
 
       if (_currentUser.name == null){
-        DocumentSnapshot docUser = await Firestore.instance
+        DocumentSnapshot docUser = await FirebaseFirestore.instance
             .collection("users")
-            .document(_firebaseUser.uid)
+            .doc(_firebaseUser.uid)
             .get();
 
         _currentUser = UserModel.fromData(docUser.data(), uid);
@@ -227,12 +227,12 @@ class AuthenticationService {
         // ToDo: Lista todos os casamentos que sou convidado e o usuário deve escolher o casamento para prosseguir
         QuerySnapshot querySnapshot = await FirebaseFirestore.instance
             .collection("users")
-            .document(_firebaseUser.uid)
+            .doc(_firebaseUser.uid)
             .collection("wedding")
-            .getDocuments();
+            .get();
 
-        for (int i = 0; i < querySnapshot.documents.length; i++) {
-          var a = querySnapshot.documents[i];
+        for (int i = 0; i < querySnapshot.docs.length; i++) {
+          var a = querySnapshot.docs[i];
           _currentUser.wedding = a.data()["wedding"];
 
           if ("ZEcjdTjdjSG79GX96u3K" == a.data()["wedding"]) { // ToDo: ID do wedding
@@ -248,7 +248,7 @@ class AuthenticationService {
   }
 
   Future<bool> verifyPrivileges(String uid) async {
-    return await Firestore.instance.collection("admins").document(uid).get().then((doc){
+    return await FirebaseFirestore.instance.collection("admins").doc(uid).get().then((doc){
       if (doc.data != null){
         return true;
       }else{
@@ -262,7 +262,7 @@ class AuthenticationService {
   Future<String> nomeCasal(String wedding) async {
     String retorno = "";
 
-    await Firestore.instance.collection("wedding").doc(wedding).get().then((doc){
+    await FirebaseFirestore.instance.collection("wedding").doc(wedding).get().then((doc){
       if (doc.data != null){
         retorno = doc.data()["nome1"] + " & " + doc.data()["nome2"];
       }else{
@@ -278,7 +278,7 @@ class AuthenticationService {
   Future<String> dataCasal(String wedding) async {
     String retorno = "";
 
-    await Firestore.instance.collection("wedding").doc(wedding).get().then((doc){
+    await FirebaseFirestore.instance.collection("wedding").doc(wedding).get().then((doc){
       if (doc.data != null){
         retorno = doc.data()["data"];
       }else{
@@ -294,7 +294,7 @@ class AuthenticationService {
   Future<String> verifyWedding(String wedding) async {
     String retorno = "";
 
-    QuerySnapshot querySnapshot = await Firestore.instance.collection("wedding").getDocuments();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("wedding").get();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       var a = querySnapshot.docs[i];
       if (wedding == a.data()["tagcasal"]) {
@@ -308,7 +308,7 @@ class AuthenticationService {
   Future<String> listConvidadoWedding(String wedding) async {
     String retorno = "";
 
-    QuerySnapshot querySnapshot = await Firestore.instance.collection("users").document(_firebaseUser.uid).collection("wedding").getDocuments();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("users").doc(_firebaseUser.uid).collection("wedding").get();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       var a = querySnapshot.docs[i];
       if (wedding == a.data()["wedding"]) {
@@ -322,19 +322,19 @@ class AuthenticationService {
   Future<Null> saveUserDataWedding(String wedding, String userId) async {
     Map<String, dynamic> weddingData = {"wedding": wedding};
 
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection("users")
-        .document(userId)
+        .doc(userId)
         .collection("wedding")
         .add(weddingData);
   }
 
   Future<Null> saveUserConvidadoWedding(String wedding, String uid, Map<String, dynamic> userData) async {
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection("wedding")
-        .document(wedding)
+        .doc(wedding)
         .collection("convidados")
-        .document(uid)
-        .setData(userData);
+        .doc(uid)
+        .set(userData);
   }
 }

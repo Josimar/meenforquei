@@ -7,7 +7,7 @@ class TarefaService {
 
   String _sistema = "tarefas";
 
-  final CollectionReference _tarefaCollectionReference = Firestore.instance
+  final CollectionReference _tarefaCollectionReference = FirebaseFirestore.instance
       .collection('wedding');
 
   Future<DocumentSnapshot> getTarefaById(String wedID, String id) {
@@ -27,15 +27,15 @@ class TarefaService {
   }
 
   Future getTarefas(String wedID) async {
-    CollectionReference _tarefasCollectionReference = Firestore.instance
+    CollectionReference _tarefasCollectionReference = FirebaseFirestore.instance
         .collection("wedding").doc(wedID)
         .collection('tarefas');
 
     try {
-      var tarefasDocumentSnapshot = await _tarefasCollectionReference.orderBy('date', descending: true).getDocuments();
+      var tarefasDocumentSnapshot = await _tarefasCollectionReference.orderBy('date', descending: true).get();
       if (tarefasDocumentSnapshot.docs.isNotEmpty){
         return tarefasDocumentSnapshot.docs
-            .map((snapshot) => TarefaModel.fromMap(snapshot.data(), snapshot.documentID))
+            .map((snapshot) => TarefaModel.fromMap(snapshot.data(), snapshot.id))
             .where((mappedItem) => mappedItem.title != null)
             .toList();
       }
@@ -50,7 +50,7 @@ class TarefaService {
 
   Future addTarefa(String wedID, TarefaModel tarefa) async {
 
-    CollectionReference _tarefaCollectionReference = Firestore.instance
+    CollectionReference _tarefaCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('tarefas');
 
@@ -82,7 +82,7 @@ class TarefaService {
   }
 
   Future updateTarefa(String wedID, TarefaModel tarefa) async {
-    CollectionReference _tarefaCollectionReference = Firestore.instance
+    CollectionReference _tarefaCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('tarefas');
 
@@ -103,7 +103,7 @@ class TarefaService {
     }
 
     try {
-      await _tarefaCollectionReference.doc(tarefa.tid).updateData(tarefa.toMap());
+      await _tarefaCollectionReference.doc(tarefa.tid).update(tarefa.toMap());
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
@@ -114,7 +114,7 @@ class TarefaService {
   }
 
   Future deleteTarefa(String wedID, String documentId, bool isDeleted) async {
-    CollectionReference _tarefaCollectionReference = Firestore.instance
+    CollectionReference _tarefaCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('tarefas');
 
@@ -134,7 +134,7 @@ class TarefaService {
   }
 
   Future recuperaTarefa(String wedID, String documentId) async {
-    CollectionReference _tarefaCollectionReference = Firestore.instance
+    CollectionReference _tarefaCollectionReference = FirebaseFirestore.instance
         .collection('wedding').doc(wedID)
         .collection('tarefas');
 

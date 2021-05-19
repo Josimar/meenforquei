@@ -16,8 +16,8 @@ import 'package:meenforquei/models/retrospectiva_model.dart';
 // import 'package:sqflite/sqflite.dart' as sqlite;
 
 class FirestoreService {
-  final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
-  final CollectionReference _weddingCollectionReference = Firestore.instance.collection('wedding');
+  final CollectionReference _usersCollectionReference = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _weddingCollectionReference = FirebaseFirestore.instance.collection('wedding');
 
   FirebaseFirestore _db = FirebaseFirestore.instance;
   String path;

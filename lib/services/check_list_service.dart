@@ -7,35 +7,35 @@ class CheckListService {
 
   String _sistema = "checklist";
 
-  final CollectionReference _checklistCollectionReference = Firestore.instance.collection('wedding');
+  final CollectionReference _checklistCollectionReference = FirebaseFirestore.instance.collection('wedding');
 
   Future<DocumentSnapshot> getCheckListById(String wedID, String id) {
-    return _checklistCollectionReference.document(wedID).collection(_sistema).document(id).get();
+    return _checklistCollectionReference.doc(wedID).collection(_sistema).doc(id).get();
   }
 
   Stream<QuerySnapshot> getCheckListAsStream(String wedID) {
-    return _checklistCollectionReference.document(wedID).collection(_sistema).snapshots();
+    return _checklistCollectionReference.doc(wedID).collection(_sistema).snapshots();
   }
 
   Future<QuerySnapshot> getCheckList(String wedID) {
-    return _checklistCollectionReference.document(wedID).collection(_sistema).getDocuments();
+    return _checklistCollectionReference.doc(wedID).collection(_sistema).get();
   }
 
   Future deleteCheckList(String wedID, String documentId) async {
-    CollectionReference _checklistCollectionReference = Firestore.instance
-        .collection('wedding').document(wedID)
+    CollectionReference _checklistCollectionReference = FirebaseFirestore.instance
+        .collection('wedding').doc(wedID)
         .collection(_sistema);
 
-    await _checklistCollectionReference.document(documentId).delete();
+    await _checklistCollectionReference.doc(documentId).delete();
   }
 
   Future getCheckListOnce(String wedID) async {
-    CollectionReference _checklistCollectionReference = Firestore.instance
-        .collection('wedding').document(wedID)
+    CollectionReference _checklistCollectionReference = FirebaseFirestore.instance
+        .collection('wedding').doc(wedID)
         .collection(_sistema);
 
     try {
-      var checklistDocumentSnapshot = await _checklistCollectionReference.orderBy('order').getDocuments();
+      var checklistDocumentSnapshot = await _checklistCollectionReference.orderBy('order').get();
       if (checklistDocumentSnapshot.docs.isNotEmpty){
         return checklistDocumentSnapshot.docs
             .map((snapshot) => CheckListModel.fromMap(snapshot.data(), snapshot.id))
